@@ -141,8 +141,11 @@ def loss(I, R, infected, recovered):
     a = 0.7
     #weights = np.linspace(0, 1, len(infected))
     # use exponential weights
-    weights = np.logspace(0, 10, len(infected))
-    return a * mean_squared_error(infected, I, sample_weight=weights) + (1 - a) * mean_squared_error(recovered, R, sample_weight=weights)
+    weights = np.logspace(0, 1, len(infected))
+    weights_norm = weights/np.sum(weights)
+    #plt.plot(weights_norm)
+    #plt.show()
+    return a * mean_squared_error(infected, I, sample_weight=weights_norm) + (1 - a) * mean_squared_error(recovered, R, sample_weight=weights_norm)
 
 def train(I0, R0, S0, N, beta, gamma, t, infected, recovered):
 
