@@ -82,7 +82,7 @@ def main():
         gamma = sGamma.val
 
         if AUTO_COMPUTE_PARAMS_BY_N:
-            beta, gamma, N_s = train(I0, R0, S0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values, recovered.values)
+            beta, gamma, N = train(I0, R0, S0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values, recovered.values)
 
         S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
         # S_plot.set_ydata(S)
@@ -138,7 +138,7 @@ def objective(input, I0, R0, S0, t, infected, recovered):
     return loss(I, R, infected, recovered)
 
 def loss(I, R, infected, recovered):
-    a = 0.7
+    a = 0.6
     #weights = np.linspace(0, 1, len(infected))
     # use exponential weights
     weights = np.logspace(0, 1, len(infected))
@@ -146,8 +146,9 @@ def loss(I, R, infected, recovered):
 
 def train(I0, R0, S0, N, beta, gamma, t, infected, recovered):
 
-    optimal = minimize(objective, [beta, gamma, N], args=(I0, R0, S0, t, infected, recovered), method='L-BFGS-B',
-             bounds=[(0.1, 0.4), (0.01, 0.1), (N, N)])
+    # method = 'Nelder-Mead', 'TNC', 'L-BFGS-B'
+    optimal = minimize(objective, [beta, gamma, N], args=(I0, R0, S0, t, infected, recovered), method='Nelder-Mead',
+             bounds=[(0.1, 0.4), (0.01, 0.1), (100000, 300000)])
     print(optimal)
     return optimal.x
 

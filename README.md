@@ -9,5 +9,5 @@
 
 24/03|25/03
 ------------ | -------------
-![forecast](/forecast/COVID_forecast_24_03.png)| -
+![forecast](/forecast/COVID_forecast_24_03.png)| ![forecast](/forecast/white_frame.png)| 
 
