@@ -53,7 +53,7 @@ def main():
     ax.plot(t, infected_extended, 'ro', alpha=1, label='I Observed', mfc='none')
     ax.plot(t, recovered_extended, 'go', alpha=1, label='R Observed', mfc='none')
 
-    ax.set_ylim(0,70000)
+    ax.set_ylim(0,75000)
     ax.set_xlim(20,70)
 
     ax.yaxis.set_tick_params(length=0)
@@ -138,10 +138,10 @@ def objective(input, I0, R0, S0, t, infected, recovered):
     return loss(I, R, infected, recovered)
 
 def loss(I, R, infected, recovered):
-    a = 0.6
+    a = 0.7
     #weights = np.linspace(0, 1, len(infected))
     # use exponential weights
-    weights = np.logspace(0, 1, len(infected))
+    weights = np.logspace(0, 10, len(infected))
     return a * mean_squared_error(infected, I, sample_weight=weights) + (1 - a) * mean_squared_error(recovered, R, sample_weight=weights)
 
 def train(I0, R0, S0, N, beta, gamma, t, infected, recovered):
