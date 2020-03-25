@@ -7,7 +7,7 @@ from sklearn.metrics import mean_squared_error
 import pandas as pd
 
 SLIDER_VISIBLE = True
-AUTO_COMPUTE_PARAMS = True
+AUTO_COMPUTE_PARAMS_BY_N = True
 START_DATE = '1/31/20'
 COUNTRY = 'Italy'
 _N = 122000
@@ -28,7 +28,7 @@ def main():
     confirmed = confirmed - recovered
 
     # predict params
-    if AUTO_COMPUTE_PARAMS:
+    if AUTO_COMPUTE_PARAMS_BY_N:
         beta, gamma, N = train(I0, R0, S0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values, recovered.values)
 
     S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
@@ -80,8 +80,11 @@ def main():
         S0 = N - I0 - R0
         beta = sBeta.val
         gamma = sGamma.val
-        S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
 
+        if AUTO_COMPUTE_PARAMS_BY_N:
+            beta, gamma, N_s = train(I0, R0, S0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values, recovered.values)
+
+        S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
         # S_plot.set_ydata(S)
         I_plot.set_ydata(I)
         R_plot.set_ydata(R)
@@ -90,8 +93,7 @@ def main():
         Max_text_plot.set_position((t[n_max], I[n_max]))
         Max_text_plot.set_text('({:.0f},{:.0f})'.format(t[n_max], I[n_max]))
         fig.canvas.draw_idle()
-        print('MSE I:{:.0f}, R:{:.0f}'.format(mean_squared_error(confirmed, I[:len(confirmed)]),
-                                              mean_squared_error(recovered, R[:len(recovered)])))
+        print('MSE I:{:.0f}'.format(loss(I[:len(confirmed)], R[:len(confirmed)], confirmed, recovered)))
     sBeta.on_changed(update)
     sGamma.on_changed(update)
     sN.on_changed(update)
@@ -133,15 +135,19 @@ def compute_SIR(I0, R0, S0, N, beta, gamma, t):
 def objective(input, I0, R0, S0, t, infected, recovered):
     beta, gamma, N = input
     S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
+    return loss(I, R, infected, recovered)
 
+def loss(I, R, infected, recovered):
     a = 0.7
-    weights = np.linspace(0, 1, len(t))
-    return a * mean_squared_error(infected, I, sample_weight= weights) + (1-a) * mean_squared_error(recovered, R, sample_weight= weights)
+    #weights = np.linspace(0, 1, len(infected))
+    # use exponential weights
+    weights = np.logspace(0, 1, len(infected))
+    return a * mean_squared_error(infected, I, sample_weight=weights) + (1 - a) * mean_squared_error(recovered, R, sample_weight=weights)
 
 def train(I0, R0, S0, N, beta, gamma, t, infected, recovered):
 
     optimal = minimize(objective, [beta, gamma, N], args=(I0, R0, S0, t, infected, recovered), method='L-BFGS-B',
-             bounds=[(0.1, 0.4), (0.01, 0.1), (100000, 1000000)])
+             bounds=[(0.1, 0.4), (0.01, 0.1), (N, N)])
     print(optimal)
     return optimal.x
 
