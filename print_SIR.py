@@ -7,6 +7,7 @@ from sklearn.metrics import mean_squared_error
 import pandas as pd
 
 SLIDER_VISIBLE = True
+AUTO_COMPUTE_PARAMS = True
 START_DATE = '1/31/20'
 COUNTRY = 'Italy'
 _N = 122000
@@ -18,6 +19,17 @@ _t = np.linspace(0, DAYS-1, DAYS)
 
 def main():
     N, I0, S0, R0, beta, gamma, t = _N, _I0, _S0, _R0, BETA, GAMMA, _t
+
+    # load data
+    confirmed = load_confirmed(COUNTRY)
+    recovered = load_recovered(COUNTRY)
+    deaths = load_deaths(COUNTRY)
+    recovered = recovered + deaths
+    confirmed = confirmed - recovered
+
+    # predict params
+    if AUTO_COMPUTE_PARAMS:
+        beta, gamma, N = train(I0, R0, S0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values, recovered.values)
 
     S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
     # Plot the data on three separate curves for S(t), I(t) and R(t)
@@ -35,11 +47,7 @@ def main():
     Max_text_plot = ax.text(t[n_max],I[n_max], '({:.0f},{:.0f})'.format(t[n_max],I[n_max]))
 
 
-    confirmed = load_confirmed(COUNTRY)
-    recovered = load_recovered(COUNTRY)
-    deaths = load_deaths(COUNTRY)
-    recovered = recovered + deaths
-    confirmed = confirmed - recovered
+
     recovered_extended = np.concatenate((recovered.values, [None] * (DAYS - len(recovered.values))))
     infected_extended = np.concatenate((confirmed.values, [None] * (DAYS - len(confirmed.values))))
     ax.plot(t, infected_extended, 'ro', alpha=1, label='I Observed', mfc='none')
@@ -60,8 +68,8 @@ def main():
     axN = plt.axes([0.25, 0.05, 0.65, 0.03], visible= SLIDER_VISIBLE)
     axI0 = plt.axes([0.25, 0.00, 0.65, 0.03], visible= SLIDER_VISIBLE)
 
-    sBeta = Slider(axBeta, 'beta', 0.001, 1, valinit=BETA, valstep=0.0001, valfmt='%1.4f')
-    sGamma = Slider(axGamma, 'gamma', 0.001, 1, valinit=GAMMA, valstep=0.001, valfmt='%1.4f')
+    sBeta = Slider(axBeta, 'beta', 0.001, 1, valinit=beta, valstep=0.0001, valfmt='%1.4f')
+    sGamma = Slider(axGamma, 'gamma', 0.001, 1, valinit=gamma, valstep=0.001, valfmt='%1.4f')
     sN = Slider(axN, 'N', 1000, 1000000, valinit=N, valstep=1000, valfmt='%1d')
     sI0 = Slider(axI0, 'I(0)', 1, 1000, valinit=I0, valstep=1, valfmt='%1d')
 
@@ -122,21 +130,20 @@ def compute_SIR(I0, R0, S0, N, beta, gamma, t):
     S, I, R = ret.T
     return S, I, R
 
-def objective(input, infected, recovered):
-    size = len(infected)
-    beta, gamma = input
+def objective(input, I0, R0, S0, t, infected, recovered):
+    beta, gamma, N = input
+    S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
 
-    S, I, R = compute_SIR()
-
-    #mean_squared_error(confirmed, I[:len(confirmed)])
-    #mean_squared_error(recovered, R[:len(recovered)]))
-
+    a = 0.7
+    return a * mean_squared_error(infected, I) + (1-a) * mean_squared_error(recovered, R)
 
 def train(I0, R0, S0, N, beta, gamma, t, infected, recovered):
 
-    optimal = minimize(objective, [0.2, 0.01], args=(0, R0, S0, N, beta, gamma, t, infected, recovered), method='L-BFGS-B',
-                       bounds=[(0.2, 0.4), (0.01, 0.1)])
 
+    optimal = minimize(objective, [beta, gamma, N], args=(I0, R0, S0, t, infected, recovered), method='L-BFGS-B',
+             bounds=[(0.1, 0.4), (0.01, 0.1), (100000, 1000000)])
+    print(optimal)
+    return optimal.x
 
 if __name__ == "__main__":
     main()
