@@ -135,10 +135,10 @@ def objective(input, I0, R0, S0, t, infected, recovered):
     S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
 
     a = 0.7
-    return a * mean_squared_error(infected, I) + (1-a) * mean_squared_error(recovered, R)
+    weights = np.linspace(0, 1, len(t))
+    return a * mean_squared_error(infected, I, sample_weight= weights) + (1-a) * mean_squared_error(recovered, R, sample_weight= weights)
 
 def train(I0, R0, S0, N, beta, gamma, t, infected, recovered):
-
 
     optimal = minimize(objective, [beta, gamma, N], args=(I0, R0, S0, t, infected, recovered), method='L-BFGS-B',
              bounds=[(0.1, 0.4), (0.01, 0.1), (100000, 1000000)])
