@@ -6,7 +6,7 @@ from matplotlib.widgets import Slider, Button, RadioButtons
 from sklearn.metrics import mean_squared_error
 import pandas as pd
 
-SLIDER_VISIBLE = True
+SLIDER_VISIBLE = False
 AUTO_COMPUTE_PARAMS_BY_N = True
 START_DATE = '1/31/20'
 COUNTRY = 'Italy'
