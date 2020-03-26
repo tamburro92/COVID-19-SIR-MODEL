@@ -19,7 +19,7 @@
 ------------ | -------------
 ![forecast](/forecast/COVID_forecast_24_03.png)| ![forecast](/forecast/COVID_forecast_25_03.png)| 
 #
-- The timeline starts at time 0 by 24/02/2020 from here 26
+- The timeline starts at t=24/02/2020
 
 26/03|27/03
 ------------ | -------------
