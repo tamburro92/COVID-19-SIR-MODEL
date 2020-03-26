@@ -4,15 +4,13 @@ from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button, RadioButtons
 from sklearn.metrics import mean_squared_error
-from model import load_from_NCVS, load_from_PC
+from model import load_from_NCVS, load_from_PC, load_Region_from_PC
 import pandas as pd
 
 SLIDER_VISIBLE = True
 AUTO_COMPUTE_PARAMS_BY_N = True
-START_DATE = '1/31/20'
-COUNTRY = 'Italy'
 _N = 122000
-_I0, _R0 = 3, 0
+_I0, _R0 = 450, 0
 _S0 = _N - _I0 - _R0
 BETA, GAMMA = 0.2417, 0.037
 DAYS = 160
@@ -22,15 +20,16 @@ def main():
     N, I0, S0, R0, beta, gamma, t = _N, _I0, _S0, _R0, BETA, GAMMA, _t
 
     # load data
-    confirmed, deaths, recovered = load_from_NCVS(COUNTRY, START_DATE)
-    #onfirmed, deaths, recovered = load_from_PC()
+    confirmed, deaths, recovered = load_from_PC()
+    #onfirmed, deaths, recovered = load_Region_from_PC('Campania')
 
     recovered = recovered + deaths
     confirmed = confirmed - recovered
 
     # predict params
     if AUTO_COMPUTE_PARAMS_BY_N:
-        beta, gamma, N = train(I0, R0, S0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values, recovered.values)
+        beta, gamma, N, I0, R0 = train(I0, R0, S0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values, recovered.values)
+        S0 = N - R0 - I0
 
     S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
     # Plot the data on three separate curves for S(t), I(t) and R(t)
@@ -54,8 +53,8 @@ def main():
     ax.plot(t, infected_extended, 'ro', alpha=1, label='I Observed', mfc='none')
     ax.plot(t, recovered_extended, 'go', alpha=1, label='R Observed', mfc='none')
 
-    ax.set_ylim(0,75000)
-    ax.set_xlim(20,70)
+    ax.set_ylim(0,80000)
+    ax.set_xlim(0,50)
 
     ax.yaxis.set_tick_params(length=0)
     ax.xaxis.set_tick_params(length=0)
@@ -82,9 +81,11 @@ def main():
         beta = sBeta.val
         gamma = sGamma.val
 
+        # predict params
         if AUTO_COMPUTE_PARAMS_BY_N:
-            beta, gamma, N = train(I0, R0, S0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values, recovered.values)
-
+            beta, gamma, N, I0, R0 = train(I0, R0, S0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values,
+                                           recovered.values)
+            S0 = N - R0 - I0
         S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
         # S_plot.set_ydata(S)
         I_plot.set_ydata(I)
@@ -118,16 +119,18 @@ def compute_SIR(I0, R0, S0, N, beta, gamma, t):
     S, I, R = ret.T
     return S, I, R
 
-def objective(input, I0, R0, S0, t, infected, recovered):
-    beta, gamma, N = input
+def objective(input, t, infected, recovered):
+    beta, gamma, N, I0, R0 = input
+    S0 = N - R0 - I0
     S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
     return loss(I, R, infected, recovered)
 
 def loss(I, R, infected, recovered):
     a = 0.7
     #weights = np.linspace(0, 1, len(infected))
+    #weights = np.ones(len(infected))
     # use exponential weights
-    weights = np.logspace(0, 10, len(infected))
+    weights = np.logspace(0, 2, len(infected))
     weights_norm = weights/np.sum(weights)
     #plt.plot(weights_norm)
     #plt.show()
@@ -137,8 +140,9 @@ def loss(I, R, infected, recovered):
 def train(I0, R0, S0, N, beta, gamma, t, infected, recovered):
 
     # method = 'Nelder-Mead', 'TNC', 'L-BFGS-B'
-    optimal = minimize(objective, [beta, gamma, N], args=(I0, R0, S0, t, infected, recovered), method='Nelder-Mead',
-             bounds=[(0.1, 0.4), (0.01, 0.1), (100000, 300000)])
+    optimal = minimize(objective, [beta, gamma, N, I0, R0], args=(t, infected, recovered), method='Nelder-Mead',
+             bounds=[(0.01, 0.4), (0.01, 0.4), (100000, 900000), (0, 600), (0, 600)])
+    S0 = N - R0 - I0
     print(optimal)
     return optimal.x
 

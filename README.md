@@ -8,20 +8,20 @@
 - The circle represents observed data coming from "data repository for the 2019 Novel Coronavirus Visual Dashboard" and aligned with the one of Protezione Civile.
 - The star represents the forecast predicted by the model.
 - The timeline starts at time 0 by 31/01/20 and i focused on a window of [20 - 70] days
-- We can see a peak on day 61 (01/04/20) from the model
 
 ## Forecast
+- The timeline starts at time 0 by 31/01/20 in image 22-25 and they are focused on a window of [20 - 70] days
 
 22/03|23/03
 ------------ | -------------
 ![forecast](/forecast/COVID_forecast_22_03.png) |![forecast](/forecast/COVID_forecast_23_03.png)
 
-
 24/03|25/03
 ------------ | -------------
 ![forecast](/forecast/COVID_forecast_24_03.png)| ![forecast](/forecast/COVID_forecast_25_03.png)| 
 
-26/03|27/03
+
+- The timeline starts at time 0 by 31/01/20 from here 26
 ------------ | -------------
-![forecast](/forecast/white_frame.png)| ![forecast](/forecast/white_frame.png)| 
+![forecast](/forecast/COVID_forecast_26_03.png)| ![forecast](/forecast/white_frame.png)| 
 

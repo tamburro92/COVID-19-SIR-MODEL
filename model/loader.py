@@ -1,6 +1,20 @@
 import pandas as pd
-
+import datetime as dt
 def load_from_PC():
+    df = pd.read_csv('data/dpc-covid19-ita-andamento-nazionale.csv')
+    return df['totale_casi'], df['deceduti'], df['dimessi_guariti']
+
+def load_Region_from_PC(region, date=None):
+
+    df = pd.read_csv('data/dpc-covid19-ita-regioni.csv')
+    regions_df = df[df['denominazione_regione'] == region]
+    if date:
+        regions_df = regions_df.iloc[date:]
+
+
+    return regions_df['totale_casi'], regions_df['deceduti'], regions_df['dimessi_guariti']
+
+def load_Province_from_PC(province):
     df = pd.read_csv('data/dpc-covid19-ita-andamento-nazionale.csv')
     return df['totale_casi'], df['deceduti'], df['dimessi_guariti']
 
