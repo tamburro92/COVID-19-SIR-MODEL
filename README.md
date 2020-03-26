@@ -19,9 +19,10 @@
 24/03|25/03
 ------------ | -------------
 ![forecast](/forecast/COVID_forecast_24_03.png)| ![forecast](/forecast/COVID_forecast_25_03.png)| 
+#
+- *The timeline starts at time 0 by 31/01/20 from here 26*
 
-
-- The timeline starts at time 0 by 31/01/20 from here 26
+26/03|27/03
 ------------ | -------------
 ![forecast](/forecast/COVID_forecast_26_03.png)| ![forecast](/forecast/white_frame.png)| 
 
