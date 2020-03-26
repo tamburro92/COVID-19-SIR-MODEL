@@ -7,7 +7,7 @@ from sklearn.metrics import mean_squared_error
 from model import load_from_NCVS, load_from_PC, load_Region_from_PC
 import pandas as pd
 
-SLIDER_VISIBLE = True
+SLIDER_VISIBLE = False
 AUTO_COMPUTE_PARAMS_BY_N = True
 _N = 122000
 _I0, _R0 = 450, 0

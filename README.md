@@ -9,7 +9,7 @@
 - The star represents the forecast predicted by the model.
 
 ## Forecast
-- The timeline starts at time 0 by 31/01/2020 in image 22-25 and they are focused on a window of [20 - 70] days
+- The timeline starts at t=24/02/2020
 
 22/03|23/03
 ------------ | -------------
@@ -18,8 +18,6 @@
 24/03|25/03
 ------------ | -------------
 ![forecast](/forecast/COVID_forecast_24_03.png)| ![forecast](/forecast/COVID_forecast_25_03.png)| 
-#
-- The timeline starts at t=24/02/2020
 
 26/03|27/03
 ------------ | -------------
