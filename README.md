@@ -7,10 +7,9 @@
 - The forecast is based on SIR epidemic model, a mathematical model to describe a spread of a disease in a population, where a I built the model and tuned the parameters to fit the current behavior of spread.
 - The circle represents observed data coming from "data repository for the 2019 Novel Coronavirus Visual Dashboard" and aligned with the one of Protezione Civile.
 - The star represents the forecast predicted by the model.
-- The timeline starts at time 0 by 31/01/20 and i focused on a window of [20 - 70] days
 
 ## Forecast
-- The timeline starts at time 0 by 31/01/20 in image 22-25 and they are focused on a window of [20 - 70] days
+- The timeline starts at time 0 by 31/01/2020 in image 22-25 and they are focused on a window of [20 - 70] days
 
 22/03|23/03
 ------------ | -------------
@@ -20,7 +19,7 @@
 ------------ | -------------
 ![forecast](/forecast/COVID_forecast_24_03.png)| ![forecast](/forecast/COVID_forecast_25_03.png)| 
 #
-- *The timeline starts at time 0 by 31/01/20 from here 26*
+- The timeline starts at time 0 by 24/02/2020 from here 26
 
 26/03|27/03
 ------------ | -------------
