@@ -2,7 +2,7 @@
 
 ## Description
 
-- This is my forecast about COVID-19 disease in Italy where.
+**This is my forecast about COVID-19 disease in Italy**
 - The forecast is tuned by the last data of 22/03/20 and it'll update daily.
 - The forecast is based on SIR epidemic model, a mathematical model to describe a spread of a disease in a population, where a I built the model and tuned the parameters to fit the current behavior of spread.
 - The circle represents observed data coming from "data repository for the 2019 Novel Coronavirus Visual Dashboard" and aligned with the one of Protezione Civile.

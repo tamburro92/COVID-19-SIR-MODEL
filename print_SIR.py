@@ -4,9 +4,10 @@ from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button, RadioButtons
 from sklearn.metrics import mean_squared_error
+from model import load_from_NCVS, load_from_PC
 import pandas as pd
 
-SLIDER_VISIBLE = False
+SLIDER_VISIBLE = True
 AUTO_COMPUTE_PARAMS_BY_N = True
 START_DATE = '1/31/20'
 COUNTRY = 'Italy'
@@ -21,9 +22,9 @@ def main():
     N, I0, S0, R0, beta, gamma, t = _N, _I0, _S0, _R0, BETA, GAMMA, _t
 
     # load data
-    confirmed = load_confirmed(COUNTRY)
-    recovered = load_recovered(COUNTRY)
-    deaths = load_deaths(COUNTRY)
+    confirmed, deaths, recovered = load_from_NCVS(COUNTRY, START_DATE)
+    #onfirmed, deaths, recovered = load_from_PC()
+
     recovered = recovered + deaths
     confirmed = confirmed - recovered
 
@@ -94,28 +95,13 @@ def main():
         Max_text_plot.set_text('({:.0f},{:.0f})'.format(t[n_max], I[n_max]))
         fig.canvas.draw_idle()
         print('MSE I:{:.0f}'.format(loss(I[:len(confirmed)], R[:len(confirmed)], confirmed, recovered)))
-    sBeta.on_changed(update)
-    sGamma.on_changed(update)
-    sN.on_changed(update)
-    sI0.on_changed(update)
+
+    if SLIDER_VISIBLE:
+        sBeta.on_changed(update)
+        sGamma.on_changed(update)
+        sN.on_changed(update)
+        sI0.on_changed(update)
     plt.show()
-
-def load_confirmed(country):
-    df = pd.read_csv('data/time_series_19-covid-Confirmed.csv', delimiter=";")
-    country_df = df[df['Country/Region'] == country]
-    return country_df.iloc[0].loc[START_DATE:]
-
-
-def load_recovered(country):
-    df = pd.read_csv('data/time_series_19-covid-Recovered.csv', delimiter=";")
-    country_df = df[df['Country/Region'] == country]
-    return country_df.iloc[0].loc[START_DATE:]
-
-
-def load_deaths(country):
-    df = pd.read_csv('data/time_series_19-covid-Deaths.csv', delimiter=";")
-    country_df = df[df['Country/Region'] == country]
-    return country_df.iloc[0].loc[START_DATE:]
 
 # The SIR model differential equations.
 def deriv(y, t, N, beta, gamma):
@@ -141,10 +127,11 @@ def loss(I, R, infected, recovered):
     a = 0.7
     #weights = np.linspace(0, 1, len(infected))
     # use exponential weights
-    weights = np.logspace(0, 1, len(infected))
+    weights = np.logspace(0, 10, len(infected))
     weights_norm = weights/np.sum(weights)
     #plt.plot(weights_norm)
     #plt.show()
+
     return a * mean_squared_error(infected, I, sample_weight=weights_norm) + (1 - a) * mean_squared_error(recovered, R, sample_weight=weights_norm)
 
 def train(I0, R0, S0, N, beta, gamma, t, infected, recovered):
