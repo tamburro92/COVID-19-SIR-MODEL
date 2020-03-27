@@ -53,7 +53,7 @@ def main():
     ax.plot(t, infected_extended, 'ro', alpha=1, label='I Observed', mfc='none')
     ax.plot(t, recovered_extended, 'go', alpha=1, label='R Observed', mfc='none')
 
-    ax.set_ylim(0,80000)
+    ax.set_ylim(0,85000)
     ax.set_xlim(0,50)
 
     ax.yaxis.set_tick_params(length=0)
@@ -139,8 +139,8 @@ def loss(I, R, infected, recovered):
 
 def train(I0, R0, S0, N, beta, gamma, t, infected, recovered):
 
-    # method = 'Nelder-Mead', 'TNC', 'L-BFGS-B'
-    optimal = minimize(objective, [beta, gamma, N, I0, R0], args=(t, infected, recovered), method='Nelder-Mead',
+    # method = 'Nelder-Mead', 'Powell', 'TNC', 'L-BFGS-B'
+    optimal = minimize(objective, [beta, gamma, N, I0, R0], args=(t, infected, recovered), method='Powell',
              bounds=[(0.01, 0.4), (0.01, 0.4), (100000, 900000), (0, 600), (0, 600)])
     S0 = N - R0 - I0
     print(optimal)
