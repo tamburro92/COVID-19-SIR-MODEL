@@ -21,5 +21,9 @@
 
 26/03|27/03
 ------------ | -------------
-![forecast](/forecast/COVID_forecast_26_03.png)| ![forecast](/forecast/white_frame.png)| 
+![forecast](/forecast/COVID_forecast_26_03.png)| ![forecast](/forecast/COVID_forecast_27_03.png)| 
+
+28/03|29/03
+------------ | -------------
+![forecast](/forecast/white_frame.png)|  ![forecast](/forecast/white_frame.png)| 
 
