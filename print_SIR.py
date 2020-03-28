@@ -8,26 +8,28 @@ from model import load_from_NCVS, load_from_PC, load_Region_from_PC
 import pandas as pd
 
 SLIDER_VISIBLE = False
-AUTO_COMPUTE_PARAMS_BY_N = True
+AUTO_TUNE_MODEL_PARAMS = True
+
+# initial and guessed model params
 _N = 122000
 _I0, _R0 = 450, 0
 _S0 = _N - _I0 - _R0
 BETA, GAMMA = 0.2417, 0.037
 DAYS = 160
-_t = np.linspace(0, DAYS-1, DAYS)
 
 def main():
-    N, I0, S0, R0, beta, gamma, t = _N, _I0, _S0, _R0, BETA, GAMMA, _t
+    N, I0, S0, R0, beta, gamma = _N, _I0, _S0, _R0, BETA, GAMMA
+    t = np.linspace(0, DAYS - 1, DAYS)
 
     # load data
-    confirmed, deaths, recovered = load_from_PC()
+    confirmed, deaths, recovered = load_from_PC(remote=True)
     #onfirmed, deaths, recovered = load_Region_from_PC('Campania')
 
     recovered = recovered + deaths
     confirmed = confirmed - recovered
 
     # predict params
-    if AUTO_COMPUTE_PARAMS_BY_N:
+    if AUTO_TUNE_MODEL_PARAMS:
         beta, gamma, N, I0, R0 = train(I0, R0, S0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values, recovered.values)
         S0 = N - R0 - I0
 
@@ -45,7 +47,6 @@ def main():
     n_max = I.argmax()
     Max_plot,= plt.plot(t[n_max],I[n_max],'bx')
     Max_text_plot = ax.text(t[n_max],I[n_max], '({:.0f},{:.0f})'.format(t[n_max],I[n_max]))
-
 
 
     recovered_extended = np.concatenate((recovered.values, [None] * (DAYS - len(recovered.values))))
@@ -82,7 +83,7 @@ def main():
         gamma = sGamma.val
 
         # predict params
-        if AUTO_COMPUTE_PARAMS_BY_N:
+        if AUTO_TUNE_MODEL_PARAMS:
             beta, gamma, N, I0, R0 = train(I0, R0, S0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values,
                                            recovered.values)
             S0 = N - R0 - I0
@@ -104,6 +105,7 @@ def main():
         sI0.on_changed(update)
     plt.show()
 
+
 # The SIR model differential equations.
 def deriv(y, t, N, beta, gamma):
     S, I, R = y
@@ -112,6 +114,7 @@ def deriv(y, t, N, beta, gamma):
     dRdt = gamma * I
     return dSdt, dIdt, dRdt
 
+
 def compute_SIR(I0, R0, S0, N, beta, gamma, t):
     y0 = S0, I0, R0
     # Integrate the SIR equations over the time grid, t.
@@ -119,11 +122,13 @@ def compute_SIR(I0, R0, S0, N, beta, gamma, t):
     S, I, R = ret.T
     return S, I, R
 
+
 def objective(input, t, infected, recovered):
     beta, gamma, N, I0, R0 = input
     S0 = N - R0 - I0
     S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
     return loss(I, R, infected, recovered)
+
 
 def loss(I, R, infected, recovered):
     a = 0.7
@@ -131,11 +136,13 @@ def loss(I, R, infected, recovered):
     #weights = np.ones(len(infected))
     # use exponential weights
     weights = np.logspace(0, 2, len(infected))
+    #weights[:weights.size-14] = 0
     weights_norm = weights/np.sum(weights)
     #plt.plot(weights_norm)
     #plt.show()
 
     return a * mean_squared_error(infected, I, sample_weight=weights_norm) + (1 - a) * mean_squared_error(recovered, R, sample_weight=weights_norm)
+
 
 def train(I0, R0, S0, N, beta, gamma, t, infected, recovered):
 
@@ -145,6 +152,7 @@ def train(I0, R0, S0, N, beta, gamma, t, infected, recovered):
     S0 = N - R0 - I0
     print(optimal)
     return optimal.x
+
 
 if __name__ == "__main__":
     main()
