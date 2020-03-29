@@ -1,5 +1,6 @@
 import pandas as pd
 import datetime as dt
+from dateutil.parser import parse
 
 PATH_andamento_nazionale_remote = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv';
 PATH_andamento_nazionale_local = 'data/dpc-covid19-ita-andamento-nazionale.csv'
@@ -10,6 +11,7 @@ PATH_andamento_regionale_local = 'data/ddpc-covid19-ita-regioni.csv'
 def load_from_PC(remote=False):
     path = PATH_andamento_nazionale_remote if remote else PATH_andamento_nazionale_local
     df = pd.read_csv(path)
+    #dates = pd.DatetimeIndex([parse(d).strftime('%Y-%m-%dT%H:%M:%S') for d in df['data']])
     return df['totale_casi'], df['deceduti'], df['dimessi_guariti']
 
 

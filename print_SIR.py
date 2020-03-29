@@ -23,7 +23,7 @@ def main():
 
     # load data
     confirmed, deaths, recovered = load_from_PC(remote=True)
-    #onfirmed, deaths, recovered = load_Region_from_PC('Campania')
+    #confirmed, deaths, recovered = load_Region_from_PC('Campania', remote=True)
 
     recovered = recovered + deaths
     confirmed = confirmed - recovered
@@ -42,8 +42,8 @@ def main():
     #S_plot, = ax.plot(t, S, 'b-+', alpha=0.5, label='S')
     I_plot, = ax.plot(t, I, 'r-+', alpha=0.5, label='I')
     R_plot, = ax.plot(t, R, 'g-+', alpha=0.5, label='R')
-    ax.set_xlabel('Days')
-    ax.set_ylabel('Numbers')
+    ax.set_xlabel('Days since 24/02/20')
+    ax.set_ylabel('Numbers of people')
     n_max = I.argmax()
     Max_plot,= plt.plot(t[n_max],I[n_max],'bx')
     Max_text_plot = ax.text(t[n_max],I[n_max], '({:.0f},{:.0f})'.format(t[n_max],I[n_max]))
@@ -54,8 +54,8 @@ def main():
     ax.plot(t, infected_extended, 'ro', alpha=1, label='I Observed', mfc='none')
     ax.plot(t, recovered_extended, 'go', alpha=1, label='R Observed', mfc='none')
 
-    ax.set_ylim(0,85000)
-    ax.set_xlim(0,50)
+    ax.set_ylim(0, I[n_max]+I[n_max]*0.035)
+    ax.set_xlim(0, 50)
 
     ax.yaxis.set_tick_params(length=0)
     ax.xaxis.set_tick_params(length=0)
@@ -72,7 +72,7 @@ def main():
     sBeta = Slider(axBeta, 'beta', 0.001, 1, valinit=beta, valstep=0.0001, valfmt='%1.4f')
     sGamma = Slider(axGamma, 'gamma', 0.001, 1, valinit=gamma, valstep=0.001, valfmt='%1.4f')
     sN = Slider(axN, 'N', 1000, 1000000, valinit=N, valstep=1000, valfmt='%1d')
-    sI0 = Slider(axI0, 'I(0)', 1, 1000, valinit=I0, valstep=1, valfmt='%1d')
+    sI0 = Slider(axI0, 'I(0)', -100, 1000, valinit=I0, valstep=1, valfmt='%1d')
 
     def update(val):
         N = sN.val
