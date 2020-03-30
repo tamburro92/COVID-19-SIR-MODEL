@@ -16,14 +16,18 @@ _I0, _R0 = 450, 0
 _S0 = _N - _I0 - _R0
 BETA, GAMMA = 0.2417, 0.037
 DAYS = 160
+DATE_TO_START = '2020-02-24'
+
 
 def main():
     N, I0, S0, R0, beta, gamma = _N, _I0, _S0, _R0, BETA, GAMMA
-    t = np.linspace(0, DAYS - 1, DAYS)
+    t = np.arange(0, DAYS)
+    #t_days = np.arange(DATE_TO_START, DAYS, dtype='datetime64[D]')
 
     # load data
     confirmed, deaths, recovered = load_from_PC(remote=True)
     #confirmed, deaths, recovered = load_Region_from_PC('Campania', remote=True)
+    #confirmed, deaths, recovered = load_from_NCVS('US', '2/24/20', remote=True)
 
     recovered = recovered + deaths
     confirmed = confirmed - recovered
@@ -47,7 +51,6 @@ def main():
     n_max = I.argmax()
     Max_plot,= plt.plot(t[n_max],I[n_max],'bx')
     Max_text_plot = ax.text(t[n_max],I[n_max], '({:.0f},{:.0f})'.format(t[n_max],I[n_max]))
-
 
     recovered_extended = np.concatenate((recovered.values, [None] * (DAYS - len(recovered.values))))
     infected_extended = np.concatenate((confirmed.values, [None] * (DAYS - len(confirmed.values))))
