@@ -33,4 +33,8 @@
 
 01/04|02/04
 ------------ | -------------
-![forecast](/forecast/COVID_forecast_01_04.png)|  ![forecast](/forecast/white_frame.png)| 
+![forecast](/forecast/COVID_forecast_01_04.png)|  ![forecast](/forecast/COVID_forecast_02_04.png)| 
+
+03/04|04/04
+------------ | -------------
+![forecast](/forecast/white_frame.png)|  ![forecast](/forecast/white_frame.png)| 
