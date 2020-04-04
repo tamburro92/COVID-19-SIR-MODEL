@@ -58,7 +58,7 @@ def main():
     ax.plot(t, recovered_extended, 'go', alpha=1, label='R Observed', mfc='none')
 
     ax.set_ylim(0, I[n_max]+I[n_max]*0.035)
-    ax.set_xlim(0, 55)
+    ax.set_xlim(0, 60)
 
     ax.yaxis.set_tick_params(length=0)
     ax.xaxis.set_tick_params(length=0)
