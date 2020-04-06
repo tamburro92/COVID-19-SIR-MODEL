@@ -57,8 +57,8 @@ def main():
     ax.plot(t, infected_extended, 'ro', alpha=1, label='I Observed', mfc='none')
     ax.plot(t, recovered_extended, 'go', alpha=1, label='R Observed', mfc='none')
 
-    ax.set_ylim(0, I[n_max]+I[n_max]*0.035)
-    ax.set_xlim(0, 60)
+    ax.set_ylim(0, I[n_max]+I[n_max]*0.04)
+    ax.set_xlim(0, t[n_max+10])
 
     ax.yaxis.set_tick_params(length=0)
     ax.xaxis.set_tick_params(length=0)
@@ -135,11 +135,12 @@ def objective(input, t, infected, recovered):
 
 def loss(I, R, infected, recovered):
     a = 0.7
+    n_windows = len(infected)
     #weights = np.linspace(0, 1, len(infected))
     #weights = np.ones(len(infected))
     # use exponential weights
-    weights = np.logspace(0, 2, len(infected))
-    #weights[:weights.size-14] = 0
+    #weights = np.logspace(0, 2, len(infected))
+    weights = np.concatenate((np.zeros(len(infected)-n_windows), np.logspace(0, 4, n_windows)))
     weights_norm = weights/np.sum(weights)
     #plt.plot(weights_norm)
     #plt.show()
