@@ -140,7 +140,7 @@ def loss(I, R, infected, recovered):
     #weights = np.ones(len(infected))
     # use exponential weights
     #weights = np.logspace(0, 2, len(infected))
-    weights = np.concatenate((np.zeros(len(infected)-n_windows), np.logspace(0, 4, n_windows)))
+    weights = np.concatenate((np.zeros(len(infected)-n_windows), np.logspace(0, 3, n_windows)))
     weights_norm = weights/np.sum(weights)
     #plt.plot(weights_norm)
     #plt.show()
