@@ -3,9 +3,10 @@ from scipy.integrate import odeint
 from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button, RadioButtons
+import matplotlib.ticker as ticker
 from sklearn.metrics import mean_squared_error
 from model import load_from_NCVS, load_from_PC, load_Region_from_PC
-import pandas as pd
+import datetime as dt
 
 SLIDER_VISIBLE = False
 AUTO_TUNE_MODEL_PARAMS = True
@@ -46,7 +47,6 @@ def main():
     #S_plot, = ax.plot(t, S, 'b-+', alpha=0.5, label='S')
     I_plot, = ax.plot(t, I, 'r-+', alpha=0.5, label='I')
     R_plot, = ax.plot(t, R, 'g-+', alpha=0.5, label='R')
-    ax.set_xlabel('Days since 24/02/20')
     ax.set_ylabel('Numbers of people')
     n_max = I.argmax()
     Max_plot,= plt.plot(t[n_max],I[n_max],'bx')
@@ -106,6 +106,13 @@ def main():
         sGamma.on_changed(update)
         sN.on_changed(update)
         sI0.on_changed(update)
+
+    def todate(x, pos):
+        return (dt.datetime.strptime(DATE_TO_START, '%Y-%m-%d') + dt.timedelta(days=x)).strftime('%d/%m')
+
+    fmt = ticker.FuncFormatter(todate)
+    ax.xaxis.set_major_formatter(fmt)
+    ax.xaxis.set_tick_params(rotation=45)
     plt.show()
 
 
