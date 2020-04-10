@@ -1,12 +1,12 @@
 import numpy as np
-from scipy.integrate import odeint
-from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button, RadioButtons
 import matplotlib.ticker as ticker
 from sklearn.metrics import mean_squared_error
-from model import load_from_NCVS, load_from_PC, load_Region_from_PC
 import datetime as dt
+from model import load_from_NCVS, load_from_PC, load_Region_from_PC
+from model import compute_SIR, train_SIR
+
 
 SLIDER_VISIBLE = False
 AUTO_TUNE_MODEL_PARAMS = True
@@ -35,10 +35,10 @@ def main():
 
     # predict params
     if AUTO_TUNE_MODEL_PARAMS:
-        beta, gamma, N, I0, R0 = train(I0, R0, S0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values, recovered.values)
+        beta, gamma, N, I0, R0 = train_SIR(S0, I0, R0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values, recovered.values, error_function=error_function)
         S0 = N - R0 - I0
 
-    S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
+    S, I, R = compute_SIR(S0, I0, R0, N, beta, gamma, t)
     # Plot the data on three separate curves for S(t), I(t) and R(t)
     fig = plt.figure(facecolor='w')
     ax = fig.add_subplot(111, axisbelow=True)
@@ -87,8 +87,8 @@ def main():
 
         # predict params
         if AUTO_TUNE_MODEL_PARAMS:
-            beta, gamma, N, I0, R0 = train(I0, R0, S0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values,
-                                           recovered.values)
+            beta, gamma, N, I0, R0 = train_SIR(S0, I0, R0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values,
+                                           recovered.values, error_function=error_function)
             S0 = N - R0 - I0
         S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
         # S_plot.set_ydata(S)
@@ -99,7 +99,6 @@ def main():
         Max_text_plot.set_position((t[n_max], I[n_max]))
         Max_text_plot.set_text('({:.0f},{:.0f})'.format(t[n_max], I[n_max]))
         fig.canvas.draw_idle()
-        print('MSE I:{:.0f}'.format(loss(I[:len(confirmed)], R[:len(confirmed)], confirmed, recovered)))
 
     if SLIDER_VISIBLE:
         sBeta.on_changed(update)
@@ -115,32 +114,7 @@ def main():
     ax.xaxis.set_tick_params(rotation=45)
     plt.show()
 
-
-# The SIR model differential equations.
-def deriv(y, t, N, beta, gamma):
-    S, I, R = y
-    dSdt = -beta * S * I / N
-    dIdt = beta * S * I / N - gamma * I
-    dRdt = gamma * I
-    return dSdt, dIdt, dRdt
-
-
-def compute_SIR(I0, R0, S0, N, beta, gamma, t):
-    y0 = S0, I0, R0
-    # Integrate the SIR equations over the time grid, t.
-    ret = odeint(deriv, y0, t, args=(N, beta, gamma))
-    S, I, R = ret.T
-    return S, I, R
-
-
-def objective(input, t, infected, recovered):
-    beta, gamma, N, I0, R0 = input
-    S0 = N - R0 - I0
-    S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
-    return loss(I, R, infected, recovered)
-
-
-def loss(I, R, infected, recovered):
+def error_function(I, R, infected, recovered):
     a = 0.7
     n_windows = len(infected)
     #weights = np.linspace(0, 1, len(infected))
@@ -153,16 +127,6 @@ def loss(I, R, infected, recovered):
     #plt.show()
 
     return a * mean_squared_error(infected, I, sample_weight=weights_norm) + (1 - a) * mean_squared_error(recovered, R, sample_weight=weights_norm)
-
-
-def train(I0, R0, S0, N, beta, gamma, t, infected, recovered):
-
-    # method = 'Nelder-Mead', 'Powell', 'TNC', 'L-BFGS-B'
-    optimal = minimize(objective, [beta, gamma, N, I0, R0], args=(t, infected, recovered), method='Powell',
-             bounds=[(0.01, 0.4), (0.01, 0.4), (100000, 900000), (0, 600), (0, 600)])
-    S0 = N - R0 - I0
-    print(optimal)
-    return optimal.x
 
 
 if __name__ == "__main__":
