@@ -49,4 +49,4 @@
 
 09/04|10/04
 ------------ | -------------
-![forecast](/forecast/COVID_forecast_09_04.png)|  ![forecast](/forecast/white_frame.png)|
+![forecast](/forecast/COVID_forecast_09_04.png)|  ![forecast](/forecast/COVID_forecast_10_04.png)|
