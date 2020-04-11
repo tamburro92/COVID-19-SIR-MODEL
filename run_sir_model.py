@@ -8,6 +8,7 @@ from model import load_from_NCVS, load_from_PC, load_Region_from_PC
 from model import compute_SIR, train_SIR
 
 
+
 SLIDER_VISIBLE = False
 AUTO_TUNE_MODEL_PARAMS = True
 
@@ -51,6 +52,7 @@ def main():
     n_max = I.argmax()
     Max_plot,= plt.plot(t[n_max],I[n_max],'bx')
     Max_text_plot = ax.text(t[n_max],I[n_max], '({:.0f},{:.0f})'.format(t[n_max],I[n_max]))
+    print('R0: {}'.format(beta / gamma))
 
     recovered_extended = np.concatenate((recovered.values, [None] * (DAYS - len(recovered.values))))
     infected_extended = np.concatenate((confirmed.values, [None] * (DAYS - len(confirmed.values))))
@@ -112,7 +114,23 @@ def main():
     fmt = ticker.FuncFormatter(todate)
     ax.xaxis.set_major_formatter(fmt)
     ax.xaxis.set_tick_params(rotation=45)
+    ax.xaxis.set_major_locator(ticker.MultipleLocator(5))
+    plt.savefig('forecast_SIR/COVID_forecast_{}'.format(dt.date.today().strftime('%d_%m')))
     plt.show()
+
+def error_function_custom(I, R, infected, recovered):
+    a = 0.5
+    n_windows = 10
+    #weights = np.linspace(0, 1, len(infected))
+    #weights = np.ones(len(infected))
+    # use exponential weights
+    #weights = np.logspace(0, 2, len(infected))
+    weights = np.concatenate((np.logspace(0, 3, n_windows), np.zeros(len(infected)-n_windows)))
+    weights_norm = weights/np.sum(weights)
+    #plt.plot(weights_norm)
+    #plt.show()
+
+    return a * mean_squared_error(infected, I, sample_weight=weights_norm) + (1 - a) * mean_squared_error(recovered, R, sample_weight=weights_norm)
 
 def error_function(I, R, infected, recovered):
     a = 0.7

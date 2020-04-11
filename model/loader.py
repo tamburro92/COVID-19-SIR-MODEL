@@ -21,6 +21,11 @@ def load_from_PC(remote=False):
     #dates = pd.DatetimeIndex([parse(d).strftime('%Y-%m-%dT%H:%M:%S') for d in df['data']])
     return df['totale_casi'], df['deceduti'], df['dimessi_guariti']
 
+def load_from_PC_increment_daily(remote=False):
+    path = PATH_andamento_nazionale_remote if remote else PATH_andamento_nazionale_local
+    df = pd.read_csv(path)
+    return df['nuovi_positivi']
+
 
 def load_Region_from_PC(region, date= None, remote=False):
     path = PATH_andamento_regionale_remote if remote else PATH_andamento_regionale_local

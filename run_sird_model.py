@@ -74,6 +74,8 @@ def main():
     fmt = ticker.FuncFormatter(todate)
     ax.xaxis.set_major_formatter(fmt)
     ax.xaxis.set_tick_params(rotation=45)
+    ax.xaxis.set_major_locator(ticker.MultipleLocator(5))
+    plt.savefig('forecast_SIRD/COVID_forecast_{}'.format(dt.date.today().strftime('%d_%m')))
     plt.show()
 
 def error_function(I, R, D, infected, recovered, deaths):
