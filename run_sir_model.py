@@ -134,7 +134,7 @@ def error_function_custom(I, R, infected, recovered):
 
 def error_function(I, R, infected, recovered):
     a = 0.7
-    n_windows = len(infected)
+    n_windows = 30
     #weights = np.linspace(0, 1, len(infected))
     #weights = np.ones(len(infected))
     # use exponential weights

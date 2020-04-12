@@ -80,7 +80,7 @@ def main():
 
 def error_function(I, R, D, infected, recovered, deaths):
     a, b, c = 0.7, 0.15, 0.15
-    n_windows = len(infected)
+    n_windows = 30
     #weights = np.linspace(0, 1, len(infected))
     #weights = np.ones(len(infected))
     # use exponential weights

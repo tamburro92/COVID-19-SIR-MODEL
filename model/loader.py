@@ -26,6 +26,10 @@ def load_from_PC_increment_daily(remote=False):
     df = pd.read_csv(path)
     return df['nuovi_positivi']
 
+def load_from_PC_delta_infected_daily(remote=False):
+    path = PATH_andamento_nazionale_remote if remote else PATH_andamento_nazionale_local
+    df = pd.read_csv(path)
+    return df['variazione_totale_positivi']
 
 def load_Region_from_PC(region, date= None, remote=False):
     path = PATH_andamento_regionale_remote if remote else PATH_andamento_regionale_local

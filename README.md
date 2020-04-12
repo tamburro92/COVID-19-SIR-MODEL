@@ -56,3 +56,7 @@
 11/04|11/04
 ------------ | -------------
 ![forecast](/forecast_SIRD/COVID_forecast_11_04.png)|  ![forecast](/forecast_daily/COVID_forecast_11_04.png)|
+
+12/04|12/04
+------------ | -------------
+![forecast](/forecast_SIRD/COVID_forecast_12_04.png)|  ![forecast](/forecast_daily/COVID_forecast_12_04.png)|
