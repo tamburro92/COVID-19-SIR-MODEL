@@ -60,7 +60,7 @@ def main():
     ax.plot(t, recovered_extended, 'go', alpha=1, label='R Observed', mfc='none')
 
     ax.set_ylim(0, I[n_max]+I[n_max]*0.04)
-    ax.set_xlim(0, t[n_max+10])
+    ax.set_xlim(0, t[n_max+15])
 
     ax.yaxis.set_tick_params(length=0)
     ax.xaxis.set_tick_params(length=0)
@@ -92,7 +92,7 @@ def main():
             beta, gamma, N, I0, R0 = train_SIR(S0, I0, R0, N, beta, gamma, t[:len(confirmed.values)], confirmed.values,
                                            recovered.values, error_function=error_function)
             S0 = N - R0 - I0
-        S, I, R = compute_SIR(I0, R0, S0, N, beta, gamma, t)
+        S, I, R = compute_SIR(S0, I0, R0, N, beta, gamma, t)
         # S_plot.set_ydata(S)
         I_plot.set_ydata(I)
         R_plot.set_ydata(R)

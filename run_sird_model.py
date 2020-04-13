@@ -59,7 +59,7 @@ def main():
 
 
     ax.set_ylim(0, I[n_max]+I[n_max]*0.04)
-    ax.set_xlim(0, t[n_max+10])
+    ax.set_xlim(0, t[n_max+15])
 
     ax.yaxis.set_tick_params(length=0)
     ax.xaxis.set_tick_params(length=0)
