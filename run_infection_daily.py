@@ -17,6 +17,7 @@ def main():
 
     # ----------------------------#
     # ----- INFECTION DAILY ----- #
+
     infection = load_from_PC_increment_daily(remote=True)
     infection_extended = np.concatenate((infection.values, [None] * (DAYS - len(infection.values))))
 
@@ -26,21 +27,27 @@ def main():
     (a, c, d), _ = opt.curve_fit(logistic_function_pdf, x, infection.values, p0=[173084, 0.13, mean_est])
     print(a, c, d)
     infection_fit_logistic = logistic_function_pdf(t, a, c, d)
+    print('MSE: {:.0f}'.format(mean_squared_error(infection_fit_logistic[:len(infection.values)], infection.values)))
 
     # GAUSSIAN FIT
+    '''
     mean_est = sum(x * infection.values) / sum(infection.values)
     sigma_est = sum(infection.values * (x - mean_est) ** 2) / sum(infection.values)
     (amplitude, mu, std), _ = opt.curve_fit(gaussian_function_pdf, x, infection.values, p0=[max(infection.values), mean_est, sigma_est])
     print(amplitude, mu, std)
     infection_fit_normal = gaussian_function_pdf(t, amplitude, mu, std)
+    print('MSE: {:.0f}'.format(mean_squared_error(infection_fit_normal[:len(infection.values)], infection.values)))
+    '''
 
     # GOMPERTZ FIT
     (a,b,n), pcov = opt.curve_fit(shifted_gompertz_function_pdf, x, infection.values, p0=[1000, 1, 0.1])
     print(a,b,n)
     infection_fit_gompertz = shifted_gompertz_function_pdf(t, a, b, n)
+    print('MSE: {:.0f}'.format(mean_squared_error(infection_fit_gompertz[:len(infection.values)], infection.values)))
 
     # --------------------------- #
     # -- DELTA INFECTION DAILY -- #
+
     delta_infection = load_from_PC_delta_infected_daily(remote=True)
     infection_delta_extended = np.concatenate((delta_infection.values, [None] * (DAYS - len(delta_infection.values))))
 
@@ -53,13 +60,14 @@ def main():
     print('MSE: {:.0f}'.format(mean_squared_error(infection_delta_fit_logistic[:len(delta_infection.values)], delta_infection.values)))
 
     # GAUSSIAN FIT
+    '''
     mean_est = sum(x * delta_infection.values) / sum(delta_infection.values)
     sigma_est = sum(delta_infection.values * (x - mean_est) ** 2) / sum(delta_infection.values)
     (amplitude, mu, std), pcov = opt.curve_fit(gaussian_function_pdf, x, delta_infection.values, p0=[max(delta_infection.values), mean_est, sigma_est])
     print(amplitude, mu, std)
     infection_delta_fit_normal = gaussian_function_pdf(t, amplitude, mu, std)
     print('MSE: {:.0f}'.format(mean_squared_error(infection_delta_fit_normal[:len(delta_infection.values)], delta_infection.values)))
-
+    '''
     # GOMPERTZ FIT
     (a,b,n), pcov = opt.curve_fit(shifted_gompertz_function_pdf, x, delta_infection.values, p0=[114691, 0.09, 10])
     print(a,b,n)
@@ -68,6 +76,7 @@ def main():
 
     # --------------------------- #
     # ------- PLOT RESULTS ------ #
+
     def todate(x, pos):
         return (dt.datetime.strptime(DATE_TO_START, '%Y-%m-%d') + dt.timedelta(days=x)).strftime('%d/%m')
     fmt = ticker.FuncFormatter(todate)
@@ -75,8 +84,8 @@ def main():
     ax = plt.subplot(211)
     ax.plot(t, infection_extended, 'ro', alpha=1,  mfc='none', label='Infected')
     ax.plot(t, infection_fit_logistic, label='Logistic fit')
-    ax.plot(t, infection_fit_normal, label='Normal fit')
-    ax.plot(t, infection_fit_gompertz, label='infection_fit_gompertz')
+    #ax.plot(t, infection_fit_normal, label='Normal fit')
+    ax.plot(t, infection_fit_gompertz, label='Gompertz fit')
     ax.set_ylabel('Infected Daily')
     legend = ax.legend()
     legend.get_frame().set_alpha(0.5)
@@ -91,7 +100,7 @@ def main():
     ax2 = plt.subplot(212)
     ax2.plot(t, infection_delta_extended, 'ro', alpha=1,  mfc='none', label='Infected')
     ax2.plot(t, infection_delta_fit_logistic, label='Logistic fit')
-    ax2.plot(t, infection_delta_fit_normal, label='Normal fit')
+    #ax2.plot(t, infection_delta_fit_normal, label='Normal fit')
     ax2.plot(t, infection_delta_fit_gompertz, label='Gompertz fit')
     ax2.set_ylabel('Infected Delta Daily')
     legend = ax2.legend()
