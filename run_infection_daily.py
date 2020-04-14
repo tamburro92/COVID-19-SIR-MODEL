@@ -20,6 +20,8 @@ def main():
 
     infection = load_from_PC_increment_daily(remote=True)
     infection_extended = np.concatenate((infection.values, [None] * (DAYS - len(infection.values))))
+    infection_roll = infection.rolling(7).mean()
+    infection_roll_extended = np.concatenate((infection_roll.values, [None] * (DAYS - len(infection_roll.values))))
 
     x = np.arange(0, len(infection))
     # LOGISTIC FIT
@@ -50,6 +52,8 @@ def main():
 
     delta_infection = load_from_PC_delta_infected_daily(remote=True)
     infection_delta_extended = np.concatenate((delta_infection.values, [None] * (DAYS - len(delta_infection.values))))
+    infection_delta_roll = delta_infection.rolling(7).mean()
+    infection_delta_roll_extended = np.concatenate((infection_delta_roll.values, [None] * (DAYS - len(infection_delta_roll.values))))
 
     x = np.arange(0, len(delta_infection))
     # LOGISTIC FIT
@@ -83,8 +87,8 @@ def main():
     # subplot 1
     ax = plt.subplot(211)
     ax.plot(t, infection_extended, 'ro', alpha=1,  mfc='none', label='Infected')
+    ax.plot(t, infection_roll_extended,'r--', alpha=0.5, label='Infected MA 5d')
     ax.plot(t, infection_fit_logistic, label='Logistic fit')
-    #ax.plot(t, infection_fit_normal, label='Normal fit')
     ax.plot(t, infection_fit_gompertz, label='Gompertz fit')
     ax.set_ylabel('Infected Daily')
     legend = ax.legend()
@@ -99,6 +103,7 @@ def main():
     # subplot 2
     ax2 = plt.subplot(212)
     ax2.plot(t, infection_delta_extended, 'ro', alpha=1,  mfc='none', label='Infected')
+    ax2.plot(t, infection_delta_roll_extended,'r--', alpha=0.5, label='Infected MA 5d')
     ax2.plot(t, infection_delta_fit_logistic, label='Logistic fit')
     #ax2.plot(t, infection_delta_fit_normal, label='Normal fit')
     ax2.plot(t, infection_delta_fit_gompertz, label='Gompertz fit')

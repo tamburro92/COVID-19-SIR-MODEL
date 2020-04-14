@@ -64,3 +64,7 @@
 13/04|13/04
 ------------ | -------------
 ![forecast](/forecast_SIRD/COVID_forecast_13_04.png)|  ![forecast](/forecast_daily/COVID_forecast_13_04.png)|
+
+14/04|14/04
+------------ | -------------
+![forecast](/forecast_SIRD/COVID_forecast_14_04.png)|  ![forecast](/forecast_daily/COVID_forecast_14_04.png)|
