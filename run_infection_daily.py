@@ -20,7 +20,7 @@ def main():
 
     infection = load_from_PC_increment_daily(remote=True)
     infection_extended = np.concatenate((infection.values, [None] * (DAYS - len(infection.values))))
-    infection_roll = infection.rolling(7).mean()
+    infection_roll = infection.rolling(5).mean()
     infection_roll_extended = np.concatenate((infection_roll.values, [None] * (DAYS - len(infection_roll.values))))
 
     x = np.arange(0, len(infection))
@@ -52,7 +52,7 @@ def main():
 
     delta_infection = load_from_PC_delta_infected_daily(remote=True)
     infection_delta_extended = np.concatenate((delta_infection.values, [None] * (DAYS - len(delta_infection.values))))
-    infection_delta_roll = delta_infection.rolling(7).mean()
+    infection_delta_roll = delta_infection.rolling(5).mean()
     infection_delta_roll_extended = np.concatenate((infection_delta_roll.values, [None] * (DAYS - len(infection_delta_roll.values))))
 
     x = np.arange(0, len(delta_infection))

@@ -133,7 +133,7 @@ def error_function_custom(I, R, infected, recovered):
     return a * mean_squared_error(infected, I, sample_weight=weights_norm) + (1 - a) * mean_squared_error(recovered, R, sample_weight=weights_norm)
 
 def error_function(I, R, infected, recovered):
-    a = 0.7
+    a = 0.5
     n_windows = 30
     #weights = np.linspace(0, 1, len(infected))
     #weights = np.ones(len(infected))

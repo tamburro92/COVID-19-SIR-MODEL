@@ -79,7 +79,7 @@ def main():
     plt.show()
 
 def error_function(I, R, D, infected, recovered, deaths):
-    a, b, c = 0.7, 0.15, 0.15
+    a, b, c = 0.33, 0.33, 0.33
     n_windows = 30
     #weights = np.linspace(0, 1, len(infected))
     #weights = np.ones(len(infected))
@@ -90,7 +90,7 @@ def error_function(I, R, D, infected, recovered, deaths):
     #plt.plot(weights_norm)
     #plt.show()
 
-    return a * mean_squared_error(infected, I, sample_weight=weights_norm) + a * mean_squared_error(recovered, R, sample_weight=weights_norm) + + a * mean_squared_error(deaths, D, sample_weight=weights_norm)
+    return a * mean_squared_error(infected, I, sample_weight=weights_norm) + b * mean_squared_error(recovered, R, sample_weight=weights_norm) + c * mean_squared_error(deaths, D, sample_weight=weights_norm)
 
 
 if __name__ == "__main__":
