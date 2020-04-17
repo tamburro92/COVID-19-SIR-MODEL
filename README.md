@@ -76,3 +76,7 @@
 16/05|16/05
 ------------ | -------------
 ![forecast](/forecast_SIRD/COVID_forecast_16_04.png)|  ![forecast](/forecast_daily/COVID_forecast_16_04.png)|
+
+17/05|17/05
+------------ | -------------
+![forecast](/forecast_SIRD/COVID_forecast_17_04.png)|  ![forecast](/forecast_daily/COVID_forecast_17_04.png)|
