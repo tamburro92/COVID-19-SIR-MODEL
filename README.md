@@ -80,3 +80,7 @@
 17/05|17/05
 ------------ | -------------
 ![forecast](/forecast_SIRD/COVID_forecast_17_04.png)|  ![forecast](/forecast_daily/COVID_forecast_17_04.png)|
+
+18/05|18/05
+------------ | -------------
+![forecast](/forecast_SIRD/COVID_forecast_18_04.png)|  ![forecast](/forecast_daily/COVID_forecast_18_04.png)|
